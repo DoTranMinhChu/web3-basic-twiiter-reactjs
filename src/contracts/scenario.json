@@ -1,0 +1,86 @@
+{
+  "accounts": {
+    "account{0}": "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4"
+  },
+  "linkReferences": {},
+  "transactions": [
+    {
+      "timestamp": 1711447105671,
+      "record": {
+        "value": "0",
+        "inputs": "()",
+        "parameters": [],
+        "name": "",
+        "type": "constructor",
+        "abi": "0x4bd64eb3805edd55ce89542ecedf19cbb30ddf7f636a6a401802b3451540cd3c",
+        "contractName": "Calculator",
+        "bytecode": "608060405234801561000f575f80fd5b505f805f6101000a81548161ffff021916908360010b61ffff1602179055506102c78061003b5f395ff3fe608060405234801561000f575f80fd5b506004361061003f575f3560e01c80630f76c1141461004357806356dd9b2d14610061578063f78041141461007d575b5f80fd5b61004b610099565b6040516100589190610140565b60405180910390f35b61007b60048036038101906100769190610187565b6100ad565b005b61009760048036038101906100929190610187565b6100e9565b005b5f805f9054906101000a900460010b905090565b805f808282829054906101000a900460010b6100c991906101df565b92506101000a81548161ffff021916908360010b61ffff16021790555050565b805f808282829054906101000a900460010b6101059190610238565b92506101000a81548161ffff021916908360010b61ffff16021790555050565b5f8160010b9050919050565b61013a81610125565b82525050565b5f6020820190506101535f830184610131565b92915050565b5f80fd5b61016681610125565b8114610170575f80fd5b50565b5f813590506101818161015d565b92915050565b5f6020828403121561019c5761019b610159565b5b5f6101a984828501610173565b91505092915050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52601160045260245ffd5b5f6101e982610125565b91506101f483610125565b92508282039050617fff81137fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff800082121715610232576102316101b2565b5b92915050565b5f61024282610125565b915061024d83610125565b925082820190507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff80008112617fff8213171561028b5761028a6101b2565b5b9291505056fea2646970667358221220f525a127016d4b5500a8d2321ef1f15dd59d10c0992aaf8f139cf2155ddb6ff764736f6c63430008160033",
+        "linkReferences": {},
+        "from": "account{0}"
+      }
+    },
+    {
+      "timestamp": 1711447137407,
+      "record": {
+        "value": "0",
+        "inputs": "(int16)",
+        "parameters": [
+          "10"
+        ],
+        "name": "add",
+        "type": "function",
+        "to": "created{1711447105671}",
+        "abi": "0x4bd64eb3805edd55ce89542ecedf19cbb30ddf7f636a6a401802b3451540cd3c",
+        "from": "account{0}"
+      }
+    }
+  ],
+  "abis": {
+    "0x4bd64eb3805edd55ce89542ecedf19cbb30ddf7f636a6a401802b3451540cd3c": [
+      {
+        "inputs": [
+          {
+            "internalType": "int16",
+            "name": "value",
+            "type": "int16"
+          }
+        ],
+        "name": "add",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "int16",
+            "name": "value",
+            "type": "int16"
+          }
+        ],
+        "name": "subtract",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      {
+        "inputs": [],
+        "name": "getCurrentValue",
+        "outputs": [
+          {
+            "internalType": "int16",
+            "name": "",
+            "type": "int16"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ]
+  }
+}
