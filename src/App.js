@@ -45,6 +45,7 @@ function App() {
         .call({ from: accounts[0] });
 
       setTweets(fetchedTweets);
+      setCommentVisibility(false);
     } catch (error) {
       console.error(error);
     }
