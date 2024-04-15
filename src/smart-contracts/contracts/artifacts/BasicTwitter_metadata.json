@@ -22,6 +22,37 @@
 					{
 						"indexed": false,
 						"internalType": "address",
+						"name": "commenter",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "comment",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "TweetCommented",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
 						"name": "author",
 						"type": "address"
 					},
@@ -39,6 +70,44 @@
 					}
 				],
 				"name": "TweetCreated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "liker",
+						"type": "address"
+					}
+				],
+				"name": "TweetLiked",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "unliker",
+						"type": "address"
+					}
+				],
+				"name": "TweetUnliked",
 				"type": "event"
 			},
 			{
@@ -70,12 +139,74 @@
 			{
 				"inputs": [
 					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "allTweets",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "author",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "content",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "countLikes",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "countComments",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "uint16",
 						"name": "newMaxLength",
 						"type": "uint16"
 					}
 				],
-				"name": "changeMaxTweetLenth",
+				"name": "changeMaxTweetLength",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_index",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_comment",
+						"type": "string"
+					}
+				],
+				"name": "commentOnTweet",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -94,54 +225,8 @@
 				"type": "function"
 			},
 			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "index",
-						"type": "uint256"
-					}
-				],
-				"name": "getMyTweet",
-				"outputs": [
-					{
-						"components": [
-							{
-								"internalType": "uint256",
-								"name": "id",
-								"type": "uint256"
-							},
-							{
-								"internalType": "address",
-								"name": "author",
-								"type": "address"
-							},
-							{
-								"internalType": "string",
-								"name": "content",
-								"type": "string"
-							},
-							{
-								"internalType": "uint256",
-								"name": "timestamp",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "amountViews",
-								"type": "uint256"
-							}
-						],
-						"internalType": "struct BasicTwitter.Tweet",
-						"name": "",
-						"type": "tuple"
-					}
-				],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
 				"inputs": [],
-				"name": "getMyTweets",
+				"name": "getAllTweets",
 				"outputs": [
 					{
 						"components": [
@@ -167,7 +252,12 @@
 							},
 							{
 								"internalType": "uint256",
-								"name": "amountViews",
+								"name": "countLikes",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "countComments",
 								"type": "uint256"
 							}
 						],
@@ -182,10 +272,60 @@
 			{
 				"inputs": [
 					{
-						"internalType": "address",
-						"name": "_owner",
-						"type": "address"
-					},
+						"internalType": "uint256",
+						"name": "_tweetId",
+						"type": "uint256"
+					}
+				],
+				"name": "getCommentsOfTweet",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "commenter",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "content",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "timestamp",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct BasicTwitter.Comment[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_tweetId",
+						"type": "uint256"
+					}
+				],
+				"name": "getLikersOfTweet",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
 					{
 						"internalType": "uint256",
 						"name": "_index",
@@ -218,7 +358,12 @@
 							},
 							{
 								"internalType": "uint256",
-								"name": "amountViews",
+								"name": "countLikes",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "countComments",
 								"type": "uint256"
 							}
 						],
@@ -227,7 +372,7 @@
 						"type": "tuple"
 					}
 				],
-				"stateMutability": "nonpayable",
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -264,7 +409,12 @@
 							},
 							{
 								"internalType": "uint256",
-								"name": "amountViews",
+								"name": "countLikes",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "countComments",
 								"type": "uint256"
 							}
 						],
@@ -274,6 +424,19 @@
 					}
 				],
 				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_index",
+						"type": "uint256"
+					}
+				],
+				"name": "likeTweet",
+				"outputs": [],
+				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -292,6 +455,77 @@
 			{
 				"inputs": [
 					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "tweetComments",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "commenter",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "content",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "tweetLikers",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_index",
+						"type": "uint256"
+					}
+				],
+				"name": "unlikeTweet",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "address",
 						"name": "",
 						"type": "address"
@@ -302,7 +536,7 @@
 						"type": "uint256"
 					}
 				],
-				"name": "tweets",
+				"name": "userTweets",
 				"outputs": [
 					{
 						"internalType": "uint256",
@@ -326,7 +560,12 @@
 					},
 					{
 						"internalType": "uint256",
-						"name": "amountViews",
+						"name": "countLikes",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "countComments",
 						"type": "uint256"
 					}
 				],
@@ -350,7 +589,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/BasicTwitter.sol": "BasicTwitter"
+			"web3-basic-twitter-reactjs/src/smart-contracts/contracts/BasicTwitter.sol": "BasicTwitter"
 		},
 		"evmVersion": "shanghai",
 		"libraries": {},
@@ -364,12 +603,12 @@
 		"remappings": []
 	},
 	"sources": {
-		"contracts/BasicTwitter.sol": {
-			"keccak256": "0xfd5d0f13080613578c91c9f05ea39c5c510d262819a05f28e1b895ff8b258e42",
+		"web3-basic-twitter-reactjs/src/smart-contracts/contracts/BasicTwitter.sol": {
+			"keccak256": "0x09f9c8f438a4352ff66c9b3040a0ae8fbf471abbc8a14f65a03bbceec9521c04",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://197d4db8a7e76e5c74e9746ac21aa0253268cf7824085e8e2966dba88a60233f",
-				"dweb:/ipfs/QmVexfdVRgwstN6ofXtXewtS3MEFVM8RjoAQR1qg2aagPS"
+				"bzz-raw://ca56de03a626aefb9aaa4603f947d0029b6f1a35536e0ff40523db9baf39d4d9",
+				"dweb:/ipfs/QmRMsaNzSwqwDXysk912R7rGo1Cx6rGgGRvyE4jULbtkxv"
 			]
 		}
 	},
