@@ -1,73 +1,70 @@
+import React, { useState, useEffect } from "react";
 import Web3 from "web3";
-import contract from "./contracts/artifacts/BasicTwitter_metadata.json";
-import { useEffect, useState } from "react";
-import "./App.css"; // Import CSS file
-const contractAddress = "0x5bee07794E62f2216406e2F1Bc2E92A4d40aE270"; // Replace with your contract address
-const contractABI = contract.output.abi;
+import BasicTwitterContract from "./smart-contracts/contracts/artifacts/BasicTwitter.json";
+import "./App.css";
+const contractAddress = "0xa838015C754cAE5b1880f88bB20860BFD06a0752"; // Replace with your contract address
 
 function App() {
   const [web3, setWeb3] = useState(null);
-  const [contract, setContract] = useState(null);
   const [accounts, setAccounts] = useState([]);
+  const [contract, setContract] = useState(null);
   const [tweets, setTweets] = useState([]);
   const [newTweetContent, setNewTweetContent] = useState("");
+  const [newCommentContent, setNewCommentContent] = useState("");
+  const [commentVisibility, setCommentVisibility] = useState({});
 
   useEffect(() => {
-    async function init() {
-      // Check if MetaMask is installed
-      if (window.ethereum) {
-        try {
-          // Request account access if needed
+    const init = async () => {
+      try {
+        if (window.ethereum) {
           await window.ethereum.request({ method: "eth_requestAccounts" });
           const web3Instance = new Web3(window.ethereum);
           setWeb3(web3Instance);
-
-          // Use web3 to get the user's accounts
           const accounts = await web3Instance.eth.getAccounts();
           setAccounts(accounts);
-
-          // Instantiate the contract
           const contractInstance = new web3Instance.eth.Contract(
-            contractABI,
+            BasicTwitterContract.abi,
             contractAddress
           );
           setContract(contractInstance);
-        } catch (error) {
-          console.error(error);
+        } else {
+          console.error("MetaMask extension not detected!");
         }
-      } else {
-        console.error("MetaMask extension not detected!");
+      } catch (error) {
+        console.error(error);
       }
-    }
+    };
     init();
   }, []);
 
-  const createTweet = async () => {
+  const fetchTweets = async () => {
     try {
       if (!contract || !web3) return;
-      if (!newTweetContent) return;
+      const fetchedTweets = await contract.methods
+        .getAllTweets()
+        .call({ from: accounts[0] });
 
-      // Send transaction to create a new tweet
-      await contract.methods
-        .createTweet(newTweetContent)
-        .send({ from: accounts[0] });
-
-      // Update the tweet list
-      fetchTweets();
+      setTweets(fetchedTweets);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const fetchTweets = async () => {
-    try {
-      if (!contract) return;
+  useEffect(() => {
+    if (contract && web3) {
+      fetchTweets();
+    }
+  }, [contract, web3]);
 
-      // Call the contract function to fetch tweets
-      const fetchedTweets = await contract.methods
-        .getMyTweets()
-        .call({ from: accounts[0] });
-      setTweets(fetchedTweets);
+  const createTweet = async () => {
+    try {
+      if (!contract || !web3) return;
+      if (!newTweetContent) return;
+      await contract.methods.createTweet(newTweetContent).send({
+        from: accounts[0],
+      });
+      setNewTweetContent("");
+      fetchTweets();
     } catch (error) {
       console.error(error);
     }
@@ -76,24 +73,112 @@ function App() {
   const handleChange = (event) => {
     setNewTweetContent(event.target.value);
   };
+  const handleChangeNewCommentContent = (event) => {
+    setNewCommentContent(event.target.value);
+  };
+  const toggleCommentVisibility = async (tweetId, index) => {
+    try {
+      if (!commentVisibility[index]) {
+        await fetchComments(tweetId, index);
+      }
+      setCommentVisibility({
+        ...commentVisibility,
+        [index]: !commentVisibility[index],
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchComments = async (tweetId, index) => {
+    try {
+      if (!contract || !web3) return;
+      const comments = await contract.methods
+        .getCommentsOfTweet(tweetId)
+        .call({ from: accounts[0] });
+      const updatedTweets = [...tweets];
+      updatedTweets[index].comments = comments;
+      setTweets(updatedTweets);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const likeTweet = async (tweetId) => {
+    try {
+      if (!contract || !web3) return;
+      await contract.methods.likeTweet(tweetId).send({ from: accounts[0] });
+      fetchTweets();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const commentOnTweet = async (tweetId, commentContent) => {
+    console.log({ tweetId, commentContent });
+    try {
+      if (!contract || !web3 || !commentContent) return;
+      await contract.methods
+        .commentOnTweet(tweetId, commentContent)
+        .send({ from: accounts[0] });
+      fetchTweets();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
-    <div>
+    <div className="container">
       <h1>Basic Twitter</h1>
       <div>
         <h2>Create Tweet</h2>
-        <textarea value={newTweetContent} onChange={handleChange} />
+        <textarea
+          value={newTweetContent}
+          onChange={handleChange}
+          placeholder="Type your tweet here..."
+        />
         <button onClick={createTweet}>Tweet</button>
       </div>
       <div>
-        <h2>My Tweets</h2>
+        <h2>All Tweets</h2>
         <ul>
-          {tweets.map((tweet, index) => (
+          {tweets?.map((tweet, index) => (
             <li key={index}>
-              <p>{tweet.content}</p>
+              <p>Content: {tweet.content}</p>
               <p>Author: {tweet.author}</p>
-              <p>Timestamp: {tweet.timestamp}</p>
-              <p>Views: {tweet.amountViews}</p>
+              <p>Likes: {parseInt(tweet.countLikes)}</p>
+              <p>Comments: {parseInt(tweet.countComments)}</p>
+              <button onClick={() => toggleCommentVisibility(tweet.id, index)}>
+                {commentVisibility[index] ? "Hide Comments" : "Read Comments"}
+              </button>
+              <button onClick={() => likeTweet(tweet.id)}>Like</button>
+              <div>
+                {commentVisibility[index] && (
+                  <div>
+                    <h3>Comments</h3>
+                    <ul>
+                      {tweet.comments?.map((comment, idx) => (
+                        <li key={idx}>
+                          <p>Content: {comment.content}</p>
+                          <p>Commenter: {comment.commenter}</p>
+                          <p>Timestamp: {comment.timestamp}</p>
+                        </li>
+                      ))}
+                    </ul>
+                    <textarea
+                      value={newCommentContent}
+                      onChange={handleChangeNewCommentContent}
+                      placeholder="Type your comment here..."
+                    />
+                    <button
+                      onClick={() =>
+                        commentOnTweet(tweet.id, newCommentContent)
+                      }
+                    >
+                      Comment
+                    </button>
+                  </div>
+                )}
+              </div>
             </li>
           ))}
         </ul>
